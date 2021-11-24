@@ -1,0 +1,5 @@
+node_modules
+dist
+init
+npm-debug.log
+.env.example
