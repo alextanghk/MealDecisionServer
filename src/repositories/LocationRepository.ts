@@ -1,5 +1,6 @@
 
-export const GetLocations = async (database:any, filter?:string, take?:number, skip?:number) => {
+export const GetLocations = async (connection:any, filter?:string, take?:number, skip?:number) => {
+    const result = await connection.execute("SELECT * FROM locations;");
     return [{
         id: 1,
         zh_name: 'test',
@@ -7,6 +8,7 @@ export const GetLocations = async (database:any, filter?:string, take?:number, s
     }];
 }
 
-export const GetLocationById = async (database:any, id: number) => {
+export const GetLocationById = async (connection:any, id: number) => {
+    const result = await connection.execute("SELECT * FROM locations;");
     return {};
 }

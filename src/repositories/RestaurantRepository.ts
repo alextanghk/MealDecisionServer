@@ -1,7 +1,8 @@
 
 import { DrawRequest } from "../types/Restaurants";
 
-export const GetRestaurants = async (database:any, filter?:string, take?:number, skip?:number) => {
+export const GetRestaurants = async (connection:any, filter?:string, take?:number, skip?:number) => {
+    const result = await connection.execute('SELECT * FROM restaurants;');
     return [{
         id: 1,
         zh_name: 'test',
@@ -9,10 +10,14 @@ export const GetRestaurants = async (database:any, filter?:string, take?:number,
     }];
 }
 
-export const GetRestaurantById = async (database:any, id: number) => {
+export const GetRestaurantById = async (connection:any, id: number) => {
+    const result = await connection.execute('SELECT * FROM restaurants;');
+
     return {};
 }
 
-export const DrawRestaurants = async(database:any, request?: DrawRequest) => {
+export const DrawRestaurants = async(connection:any, request?: DrawRequest) => {
+    const result = await connection.execute('SELECT * FROM restaurants;');
+
     return [];
 }

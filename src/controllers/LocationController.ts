@@ -3,19 +3,19 @@ import * as LocationRepository from '../repositories/LocationRepository';
 
 export default class LocationController {
 
-    private database = null;
+    private connection = null;
 
-    constructor(db:any) {
-        this.database = db;
+    constructor(conn:any) {
+        this.connection = conn;
     }
 
     public async GetLocations(filter?:string, take?:number, skip?:number) {
-        const data = await LocationRepository.GetLocations(this.database, filter, take, skip);
+        const data = await LocationRepository.GetLocations(this.connection, filter, take, skip);
         return data;
     }
 
     public async GetLocationById(id: number) {
-        const data = await LocationRepository.GetLocationById(this.database, id);
+        const data = await LocationRepository.GetLocationById(this.connection, id);
         return data;
     }
 }
