@@ -9,7 +9,7 @@ export default {
         isolatedModules: true
     }
   },
-  testMatch: ["**/?(*.)+(spec|test).[tj]s?(x)"],
+  testMatch: ["<rootDir>/src/**/?(*.)+(spec|test).[tj]s?(x)"],
   transform: {
     "^.+\\.(ts|tsx)$": "ts-jest",
   },
