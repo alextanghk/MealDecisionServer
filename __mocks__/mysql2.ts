@@ -10,7 +10,7 @@ module.exports = {
     createPool: jest.fn().mockReturnValue({
             connect: jest.fn(),
             query: jest.fn(),
-            execute: jest.fn(),
+            execute: jest.fn().mockReturnValue([[],null]),
             end: jest.fn(),
             
     })

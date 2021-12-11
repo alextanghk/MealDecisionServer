@@ -8,7 +8,7 @@ module.exports = {
     createPool: jest.fn().mockResolvedValue({
             connect: jest.fn(),
             query: jest.fn(),
-            execute: jest.fn(),
+            execute: jest.fn().mockResolvedValue([[],null]),
             end: jest.fn(),
     })
 }
