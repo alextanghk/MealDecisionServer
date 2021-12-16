@@ -9,8 +9,8 @@ dotenv.config()
 const routes = express.Router();
 
 const middleWare = async (req:express.Request,res:express.Response,next: Function) => {
-    const connection = await database('','','','');
-    req.connection = connection;
+    // const connection = await database('','','','');
+    // req.connection = null;
     next();
 }
 

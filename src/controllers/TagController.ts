@@ -8,12 +8,11 @@ export default class TagController {
         this.database = db;
     }
 
-    public async GetTags(filter?:string, take?:number, skip?:number) {
-        const data = await TagRepository.GetTags(this.database, filter, take, skip);
-        return data;
+    public async GetTags(filter?:string, skip?:number, take?:number) {
+        return []
     }
     public async GetTagById(id:number) {
-        const data = await TagRepository.GetTagById(this.database, id);
-        return data;
+        return []
+
     }
 }

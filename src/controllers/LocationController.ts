@@ -9,13 +9,13 @@ export default class LocationController {
         this.connection = conn;
     }
 
-    public async GetLocations(filter?:string, take?:number, skip?:number) {
-        const data = await LocationRepository.GetLocations(this.connection, filter, take, skip);
-        return data;
+    public async GetLocations(filter?:string, skip?:number, take?:number) {
+        return []
+
     }
 
     public async GetLocationById(id: number) {
-        const data = await LocationRepository.GetLocationById(this.connection, id);
-        return data;
+        return []
+
     }
 }
