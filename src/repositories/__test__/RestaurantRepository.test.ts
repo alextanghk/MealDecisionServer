@@ -48,18 +48,17 @@ describe('Restaurant Repository Function - Get Restaurant by id', () => {
     })
 })
 
-describe('Restaurant Repository Function - Get Restaurant Links by ids', () => {
+describe('Restaurant Repository Function - Get Restaurant Links by id', () => {
     const requests = [
-        { ids: null, expectData: [], expectSQL: "", expectResult: [] },
-        { ids: [], expectData: [], expectSQL: "", expectResult: [] },
-        { ids: [1], expectData: [[1]], expectSQL: "SELECT `restaurant_id`,`link`,`type` FROM `restaurant_links` WHERE `visible` = 1 AND `restaurant_id` IN (?);", expectResult: ["123"] },
+        { id: null, expectData: [], expectSQL: "", expectResult: [] },
+        { id: 1, expectData: [1], expectSQL: "SELECT `restaurant_id`,`link`,`type` FROM `restaurant_links` WHERE `visible` = 1 AND `restaurant_id` = ?;", expectResult: ["123"] },
     ]
     it.each(requests)("Get by %o", async(request)=> {
         const connection = await database('','','','');
         connection.execute.mockClear();
         connection.execute.mockReturnValue([request.expectResult,null])
-        const result = await repo.GetRestaurantLinks(connection, request.ids);
-        if (request.ids === null || request.ids.length == 0) {
+        const result = await repo.GetRestaurantLinksById(connection, request.id);
+        if (request.id === null) {
             expect(result).toEqual([])
         } else {
             expect(connection.execute).toBeCalledTimes(1)

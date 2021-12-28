@@ -32,29 +32,14 @@ export const GetRestaurantById = async (cacheType:string, connection:any, id: nu
             result = cache.get(cacheKey)
         } else {
             result = repo.GetRestaurantById(connection, id)
+            const links = repo.GetRestaurantLinksById(connection, id)
+            if (result != null) result = { ...result, links: links }
             cache.set(cacheKey, result)
         }
     } else {
         result = repo.GetRestaurantById(connection, id)
-    }
-    return result;
-}
-
-export const GetRestaurantLinks = async(cacheType:string, connection:any, ids: Array<number>) => {
-    let result = null
-    const cacheKey = 'GET_RESTAURANT_LINKS_BY_IDS_'+helpers.CacheKey({restaurantIds:ids})
-
-    if (cacheType != '') {
-        const cache = new CacheLoader(cacheType)
-        const hasCache = cache.has(cacheKey)
-        if (hasCache) {
-            result = cache.get(cacheKey)
-        } else {
-            result = repo.GetRestaurantLinks(connection, ids)
-            cache.set(cacheKey, result)
-        }
-    } else {
-        result = repo.GetRestaurantLinks(connection, ids)
+        const links = repo.GetRestaurantLinksById(connection, id)
+        if (result != null) result = { ...result, links: links }
     }
     return result;
 }

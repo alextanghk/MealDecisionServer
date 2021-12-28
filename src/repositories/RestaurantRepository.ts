@@ -25,10 +25,10 @@ export const GetRestaurantById = async (connection:any, id: number) => {
     return rows.length > 0 ? rows[0] : null;
 }
 
-export const GetRestaurantLinks = async(connection:any, ids: Array<number>) => {
-    if (ids !== null && ids.length > 0) {
-        let sql = "SELECT `restaurant_id`,`link`,`type` FROM `restaurant_links` WHERE `visible` = 1 AND `restaurant_id` IN (?);"
-        const [rows, fields] = await connection.execute(sql,[ids]);
+export const GetRestaurantLinksById = async(connection:any, id: number) => {
+    if (id !== null) {
+        let sql = "SELECT `restaurant_id`,`link`,`type` FROM `restaurant_links` WHERE `visible` = 1 AND `restaurant_id` = ?;"
+        const [rows, fields] = await connection.execute(sql,[id]);
         return rows;
     }
     return []

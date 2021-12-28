@@ -85,18 +85,23 @@ describe("Restaurant Repository Cache Test", () => {
         const cacheKey = 'GET_RESTAURANT_BY_ID_'+MockCacheKey
 
         const spy = jest.spyOn(repo,"GetRestaurantById")
+        const spyLinks = jest.spyOn(repo,"GetRestaurantLinksById")
 
         beforeEach(()=>{
             spy.mockReset()
+            spyLinks.mockReset()
         })
 
         it("Without cache", async ()=>{
-            spy.mockReturnValue("testing")
+            spy.mockReturnValue({ id: 1})
+            spyLinks.mockReturnValue([])
             const result = await repoCache.GetRestaurantById('',null, 1)
             expect(MockCacheLoader).toHaveBeenCalledTimes(0)
             expect(spy).toBeCalledTimes(1)
             expect(spy).toBeCalledWith(null, 1)
-            expect(result).toEqual("testing")
+            expect(spyLinks).toBeCalledTimes(1)
+            expect(spyLinks).toBeCalledWith(null, 1)
+            expect(result).toEqual({id: 1, links:[]})
         })
 
         describe("Local Cache Type", () => {
@@ -112,13 +117,15 @@ describe("Restaurant Repository Cache Test", () => {
                 expect(mockGetCache).toBeCalledTimes(1)
                 expect(mockGetCache).toBeCalledWith(cacheKey)
                 expect(spy).toBeCalledTimes(0)
+                expect(spyLinks).toBeCalledTimes(0)
             })
 
             it("Cache Not Exist", async()=> {
-                const mockResult = "testing"
+                const mockResult = { id: 1, links: [] }
 
                 mockHasCache.mockReturnValue(false)
-                spy.mockReturnValue(mockResult)
+                spy.mockReturnValue({ id: 1})
+                spyLinks.mockReturnValue([])
 
                 const result = await repoCache.GetRestaurantById("local",null, 1)
                 expect(mockHelper).toBeCalledTimes(1)
@@ -129,61 +136,8 @@ describe("Restaurant Repository Cache Test", () => {
                 expect(mockGetCache).toBeCalledTimes(0)
                 expect(spy).toBeCalledTimes(1)
                 expect(spy).toBeCalledWith(null, 1)
-                expect(mockSetCache).toBeCalledTimes(1)
-                expect(mockSetCache).toBeCalledWith(cacheKey, mockResult)
-            })
-        })
-    })
-
-    describe("Get Restaurant Links by ids", () =>{
-        
-        const cacheKey = 'GET_RESTAURANT_LINKS_BY_IDS_'+MockCacheKey
-
-        const spy = jest.spyOn(repo,"GetRestaurantLinks")
-
-        beforeEach(()=>{
-            spy.mockReset()
-        })
-
-        it("Without cache", async ()=>{
-            spy.mockReturnValue("testing")
-            const result = await repoCache.GetRestaurantLinks('',null, [1])
-            expect(MockCacheLoader).toHaveBeenCalledTimes(0)
-            expect(spy).toBeCalledTimes(1)
-            expect(spy).toBeCalledWith(null, [1])
-            expect(result).toEqual("testing")
-        })
-
-        describe("Local Cache Type", () => {
-            it("Cache Exist", async() =>{
-                mockGetCache.mockReturnValue("testing")
-                mockHasCache.mockReturnValue(true)
-                const result = await repoCache.GetRestaurantLinks("local",null, [1])
-                expect(mockHelper).toBeCalledTimes(1)
-                expect(mockHelper).toBeCalledWith({restaurantIds: [1]})
-                expect(MockCacheLoader).toHaveBeenCalledTimes(1)
-                expect(mockHasCache).toBeCalledTimes(1)
-                expect(mockHasCache).toBeCalledWith(cacheKey)
-                expect(mockGetCache).toBeCalledTimes(1)
-                expect(mockGetCache).toBeCalledWith(cacheKey)
-                expect(spy).toBeCalledTimes(0)
-            })
-
-            it("Cache Not Exist", async()=> {
-                const mockResult = "testing"
-
-                mockHasCache.mockReturnValue(false)
-                spy.mockReturnValue(mockResult)
-
-                const result = await repoCache.GetRestaurantLinks("local",null, [1])
-                expect(mockHelper).toBeCalledTimes(1)
-                expect(mockHelper).toBeCalledWith({restaurantIds: [1]})
-                expect(MockCacheLoader).toHaveBeenCalledTimes(1)
-                expect(mockHasCache).toBeCalledTimes(1)
-                expect(mockHasCache).toBeCalledWith(cacheKey)
-                expect(mockGetCache).toBeCalledTimes(0)
-                expect(spy).toBeCalledTimes(1)
-                expect(spy).toBeCalledWith(null, [1])
+                expect(spyLinks).toBeCalledTimes(1)
+                expect(spyLinks).toBeCalledWith(null, 1)
                 expect(mockSetCache).toBeCalledTimes(1)
                 expect(mockSetCache).toBeCalledWith(cacheKey, mockResult)
             })

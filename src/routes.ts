@@ -1,89 +1,26 @@
-import express from 'express';
-import LocationController from './controllers/LocationController';
-import RestaurantController from './controllers/RestaurantController';
-import TagController from './controllers/TagController';
-import database from './configs/database';
+import express from 'express'
+import * as LocationController from './controllers/LocationController'
+import * as RestaurantController from './controllers/RestaurantController'
+import * as TagController from './controllers/TagController'
+import database from './configs/database'
 import dotenv from 'dotenv'
+import middleware from './middleware'
 dotenv.config()
 
 const routes = express.Router();
 
-const middleWare = async (req:express.Request,res:express.Response,next: Function) => {
-    // const connection = await database('','','','');
-    // req.connection = null;
-    next();
-}
+routes.get("/locations",middleware, LocationController.GetLocations);
+routes.get("/locations/:id",middleware, LocationController.GetLocationById);
+routes.get("/locations/:id/count",middleware, LocationController.CountRestaurants);
 
-routes.get("/locations",middleWare, async (req,res)=>{
-    const locationController = new LocationController(req.connection);
-    const data = await locationController.GetLocations();
-    res.json({
-        data
-    })
-});
+routes.get("/locations/:locationId/restaurants",middleware, RestaurantController.GetRestaurants);
 
-routes.get("/locations/:id",middleWare, async (req,res)=>{
-    if (!Number.isInteger(Number(req.params.id))) {
-        res.status(500).json({})
-        return
-    }
-    const id = Number(req.params.id);
-    const locationController = new LocationController(req.connection);
+routes.get("/restaurants",middleware,RestaurantController.GetRestaurants)
+routes.get("/restaurants/:id",middleware,RestaurantController.GetRestaurantById);
+routes.post("/restaurants/draw",middleware,RestaurantController.PostDrawRestaurants)
 
-    const data = await locationController.GetLocationById(id);
-    res.json({
-        data
-    })
-});
-
-routes.get("/restaurants",middleWare,async (req,res)=>{
-    const restaurantController = new RestaurantController(req.connection);
-    const data = await restaurantController.GetRestaurants()
-    res.json({
-        data
-    })
-})
-
-routes.get("/restaurants/:id",middleWare,async (req,res)=>{
-    if (!Number.isInteger(Number(req.params.id))) {
-        res.status(500).json({})
-        return
-    }
-    const id = Number(req.params.id);
-    const restaurantController = new RestaurantController(req.connection);
-    const data = await restaurantController.GetRestaurantById(id);
-    res.json({
-        data
-    })
-});
-
-routes.post("/restaurants/draw",middleWare,async (req,res)=>{
-    const restaurantController = new RestaurantController(req.connection);
-    const data = await restaurantController.PostDrawRestaurants()
-    res.json({
-        data
-    })
-})
-
-routes.get("/tags",middleWare,async (req,res)=>{
-    const tagController = new TagController(req.connection);
-    const data = await tagController.GetTags()
-    res.json({
-        data
-    })
-})
-
-routes.get("/tags/:id",middleWare,async (req,res)=>{
-    if (!Number.isInteger(Number(req.params.id))) {
-        res.status(500).json({})
-        return
-    }
-    const id = Number(req.params.id);
-    const tagController = new TagController(req.connection);
-    const data = await tagController.GetTagById(id);
-    res.json({
-        data
-    })
-});
+routes.get("/tags",middleware,TagController.GetTags)
+routes.get("/tags/:id/count",middleware,TagController.CountRestaurants)
+routes.get("/tags/:id",middleware,TagController.GetTagById);
 
 export default routes;
