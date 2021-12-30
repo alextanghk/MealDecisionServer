@@ -18,14 +18,15 @@ describe('Restaurant Repository Config', () => {
 
 describe('Restaurant Repository Function - Get Restaurants', () => {
     const requests = [
-        { param: { locationId: 0, filter: "ABC", skip: 0, take: 5}, expectData: ["ABC",0,5], expectSQL: repo.baseSQL+" AND r.`name` LIKE '%?%' LIMIT ?, ?;", expectResult: []},
-        { param: { locationId: 1, filter: "DEF", skip: 20, take: 10}, expectData: [1,"DEF",20,10], expectSQL: repo.baseSQL+" AND r.`location_id` = ? AND r.`name` LIKE '%?%' LIMIT ?, ?;", expectResult: []}
+        { locationId: 0, param: { filter: "ABC", skip: 0, take: 5}, expectData: ["%ABC%",0,5], expectSQL: repo.baseSQL+" AND r.`name` LIKE ? LIMIT ?, ?;", expectResult: []},
+        { locationId: 1, param: { filter: "DEF", skip: 20, take: 10}, expectData: [1,"%DEF%",20,10], expectSQL: repo.baseSQL+" AND r.`location_id` = ? AND r.`name` LIKE ? LIMIT ?, ?;", expectResult: []},
+        { locationId: 1, param: null, expectData: [1], expectSQL: repo.baseSQL+" AND r.`location_id` = ?;", expectResult: []}
     ]
     it.each(requests)("Get by %o", async(request)=> {
         const connection = await database('','','','');
         connection.execute.mockClear();
         connection.execute.mockReturnValue([request.expectResult,null])
-        const result = await repo.GetRestaurants(connection, request.param.locationId, request.param);
+        const result = await repo.GetRestaurants(connection, request.locationId, request.param);
         expect(connection.execute).toBeCalledTimes(1);
         expect(connection.execute).toBeCalledWith(request.expectSQL, request.expectData)
         expect(result).toEqual(request.expectResult)

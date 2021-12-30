@@ -1,8 +1,10 @@
+import Mysql from 'mysql2/promise'
+
 import * as repo from '../RestaurantRepository';
 import * as helpers from '../../helpers/helpers';
 import CacheLoader from '../../caches/CacheLoader';
 
-export const GetRestaurants = async (cacheType:string, connection:any, locationId: number = 0, param : { filter:string, skip:number, take:number }) => {
+export const GetRestaurants = async (cacheType:string, connection:Mysql.Pool, locationId: number = 0, param?: { filter:string, skip:number, take:number } | null) => {
     let result = null
     const cacheKey = 'GET_RESTAURANTS_'+helpers.CacheKey({locationId:locationId, param: param})
 
@@ -21,7 +23,7 @@ export const GetRestaurants = async (cacheType:string, connection:any, locationI
     return result;
 }
 
-export const GetRestaurantById = async (cacheType:string, connection:any, id: number) => {
+export const GetRestaurantById = async (cacheType:string, connection:Mysql.Pool, id: number) => {
     let result = null
     const cacheKey = 'GET_RESTAURANT_BY_ID_'+helpers.CacheKey({restaurantId:id})
 
@@ -44,7 +46,7 @@ export const GetRestaurantById = async (cacheType:string, connection:any, id: nu
     return result;
 }
 
-export const DrawRestaurants = async(cacheType:string, connection:any, request?: { locationId?: number, rangeIds?:Array<number>, tagIds?:Array<number>, numOfRandom?:number }) => {
+export const DrawRestaurants = async(cacheType:string, connection:Mysql.Pool, request?: { locationId?: number, rangeIds?:Array<number>, tagIds?:Array<number>, numOfRandom?:number }) => {
     let result = null
     const cacheKey = 'DRAW_RESTAURANTS_'+helpers.CacheKey(request)
 

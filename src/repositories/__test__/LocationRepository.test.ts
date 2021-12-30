@@ -29,8 +29,9 @@ describe('Location Repository Function - Count Restaurants', () => {
 
 describe("Location Repository Function - Get Locations", ()=>{
     const requests = [
-        { param: { filter: "DEF", take: 10, skip: 20}, expectData:["DEF","DEF",20,10], expectSQL: repo.baseSQL+" AND (`zh_name` LIKE '%?%' OR `en_name` LIKE '%?%') LIMIT ?, ?;", expectResult: ["ABC"]},
-        { param: { filter: "GHI", take: 20, skip: 30}, expectData:["GHI","GHI",30,20], expectSQL: repo.baseSQL+" AND (`zh_name` LIKE '%?%' OR `en_name` LIKE '%?%') LIMIT ?, ?;", expectResult: ["EFG"]}
+        { param: { filter: "DEF", take: 10, skip: 20}, expectData:["%DEF%","%DEF%",20,10], expectSQL: repo.baseSQL+" AND (`zh_name` LIKE ? OR `en_name` LIKE ?) LIMIT ?, ?;", expectResult: ["ABC"]},
+        { param: { filter: "GHI", take: 20, skip: 30}, expectData:["%GHI%","%GHI%",30,20], expectSQL: repo.baseSQL+" AND (`zh_name` LIKE ? OR `en_name` LIKE ?) LIMIT ?, ?;", expectResult: ["EFG"]},
+        { param: null, expectData:[], expectSQL: repo.baseSQL+";", expectResult: ["EFG"]},
     ]
     it.each(requests)("Get by %o", async(request)=>{
         const connection = await database('','','','');

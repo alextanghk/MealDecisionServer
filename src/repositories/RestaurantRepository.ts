@@ -1,40 +1,63 @@
+import Mysql from 'mysql2/promise'
+
 export const baseSQL = "SELECT r.`id`,r.`name`,r.`zh_address`, r.`en_address`, l.`zh_name` AS 'loc_zh_name', l.`en_name` AS 'loc_en_name', p.`content` AS 'price_range'"
             + " FROM `restaurants` r"
             + " LEFT JOIN `locations` l ON r.`location_id` = l.`id`"
             + " LEFT JOIN `price_ranges` p ON r.`range_id` = p.`id`"
             + " WHERE r.`visible` = 1";
 
-export const GetRestaurants = async (connection:any, locationId: number = 0, param : { filter:string, skip:number, take:number }) => {
+interface RestaurantData extends Mysql.RowDataPacket {
+    id: number,
+    name: string,
+    zh_address: string,
+    en_address: string,
+    loc_zh_name: string,
+    loc_en_name: string,
+    price_range: string
+}
+            
+interface RestaurantLinkData extends Mysql.RowDataPacket {
+    restaurant_id: number,
+    link: string,
+    type: string
+}
+export const GetRestaurants = async (connection:Mysql.Pool, locationId: number = 0, param?: { filter:string, skip:number, take:number } | null) => {
     let sql, data = [];
     sql = baseSQL
     if (locationId > 0) {
-        sql += " AND r.`location_id` = ?";
+        sql += " AND r.`location_id` = ?"
         data.push(locationId)
     }
-    sql += " AND r.`name` LIKE '%?%' LIMIT ?, ?;";
-    data = data.concat([param.filter, param.skip, param.take])
+    if (param !== null) {
+        sql += " AND r.`name` LIKE ? LIMIT ?, ?"
+        data.push(`%${param?.filter}%`)
+        data.push(param?.skip)
+        data.push(param?.take)
+    }
+    sql += ";"
 
-    const [rows, fields] = await connection.execute(sql, data);
+    const [rows, fields] = await connection.execute<Array<RestaurantData>>(sql, data)
 
     return rows;
 }
 
-export const GetRestaurantById = async (connection:any, id: number) => {
+export const GetRestaurantById = async (connection:Mysql.Pool, id: number) => {
     let sql = baseSQL + " AND r.`id` = ?;"
-    const [rows, fields] = await connection.execute(sql,[id]);
-    return rows.length > 0 ? rows[0] : null;
+    const [rows] = await connection.execute<Array<RestaurantData>>(sql,[id]);
+    if (rows === null || rows === undefined) return null;
+    return rows.length > 0 ? rows[0] ? rows[0] : null : null;
 }
 
-export const GetRestaurantLinksById = async(connection:any, id: number) => {
+export const GetRestaurantLinksById = async(connection:Mysql.Pool, id: number) => {
     if (id !== null) {
         let sql = "SELECT `restaurant_id`,`link`,`type` FROM `restaurant_links` WHERE `visible` = 1 AND `restaurant_id` = ?;"
-        const [rows, fields] = await connection.execute(sql,[id]);
+        const [rows] = await connection.execute<Array<RestaurantLinkData>>(sql,[id]);
         return rows;
     }
     return []
 }
 
-export const DrawRestaurants = async(connection:any, request?: { locationId?: number, rangeIds?:Array<number>, tagIds?:Array<number>, numOfRandom?:number }) => {
+export const DrawRestaurants = async(connection:Mysql.Pool, request?: { locationId?: number, rangeIds?:Array<number>, tagIds?:Array<number>, numOfRandom?:number }) => {
     let sql = baseSQL
     let data = []
     if (request != null) {
@@ -73,6 +96,6 @@ export const DrawRestaurants = async(connection:any, request?: { locationId?: nu
     }
     sql += ";"
 
-    const [rows,fields] = await connection.execute(sql, data)
+    const [rows] = await connection.execute<Array<RestaurantData>>(sql, data)
     return rows
 }

@@ -12,8 +12,8 @@ const MockResponse = () => {
 describe("Count Restaurants", () => {
     it.each(["1","2"])('Success - Count Restaurants by location id %s', async(id)=> {
         const MockRequest = {
-            connection: null,
-            query: {
+            database: null,
+            params: {
                 id: id
             }
         }
@@ -21,14 +21,14 @@ describe("Count Restaurants", () => {
         const res = MockResponse();
         const result = await controller.CountRestaurants(MockRequest, res)
         expect(spy).toBeCalledTimes(1)
-        expect(spy).toBeCalledWith(process.env.CACHE_TYPE,MockRequest.connection, parseInt(id))
+        expect(spy).toBeCalledWith(process.env.CACHE_TYPE,MockRequest.database, parseInt(id))
         expect(res.json).toBeCalledTimes(1)
     })
 
     it.each([undefined, null])('Fail - Count Restaurants by location id %s', async(id)=> {
         const MockRequest = {
-            connection: null,
-            query: {
+            database: null,
+            params: {
                 id: id
             }
         }
@@ -50,22 +50,21 @@ describe("Get Tags", () => {
         { filter: "name"},
         { },
         null,
-        undefined
     ])('Success - Get Tags %o', async(query)=> {
         const MockRequest = {
-            connection: null,
+            database: null,
             query: query
         }
         const param = query === null || query === undefined ? null : {
             filter: query.filter || "",
             skip: query.skip || 0,
-            take: query.take || process.env.DEFAULT_ROWS_NUM
+            take: query.take || parseInt(process.env.DEFAULT_ROWS_NUM?.toString())
         }
         const spy = jest.spyOn(repoCache,"GetTags").mockReturnValue("")
         const res = MockResponse();
         const result = await controller.GetTags(MockRequest, res)
         expect(spy).toBeCalledTimes(1)
-        expect(spy).toBeCalledWith(process.env.CACHE_TYPE,MockRequest.connection, param)
+        expect(spy).toBeCalledWith(process.env.CACHE_TYPE,MockRequest.database, param)
         expect(res.json).toBeCalledTimes(1)
     })
     it.each([
@@ -74,13 +73,13 @@ describe("Get Tags", () => {
         { filter: "", skip: 0, take: -10},
     ])('Fail - Get Tags %o', async(query)=> {
         const MockRequest = {
-            connection: null,
+            database: null,
             query: query
         }
         const param = query === null || query === undefined ? null : {
             filter: query.filter || "",
             skip: query.skip || 0,
-            take: query.take || process.env.DEFAULT_ROWS_NUM
+            take: query.take || parseInt(process.env.DEFAULT_ROWS_NUM?.toString())
         }
         const spy = jest.spyOn(repoCache,"GetTags").mockReturnValue("")
         const res = MockResponse();
@@ -95,8 +94,8 @@ describe("Get Tags", () => {
 describe("Get Tag by id", () => {
     it.each(["1","2"])('Success - Get Tag by id %s', async(id)=> {
         const MockRequest = {
-            connection: null,
-            query: {
+            database: null,
+            params: {
                 id: id
             }
         }
@@ -104,14 +103,14 @@ describe("Get Tag by id", () => {
         const res = MockResponse();
         const result = await controller.GetTagById(MockRequest, res)
         expect(spy).toBeCalledTimes(1)
-        expect(spy).toBeCalledWith(process.env.CACHE_TYPE,MockRequest.connection, parseInt(id))
+        expect(spy).toBeCalledWith(process.env.CACHE_TYPE,MockRequest.database, parseInt(id))
         expect(res.json).toBeCalledTimes(1)
     })
 
     it.each([undefined, null])('Fail - Get Tag by id %s', async(id)=> {
         const MockRequest = {
-            connection: null,
-            query: {
+            database: null,
+            params: {
                 id: id
             }
         }

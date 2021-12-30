@@ -86,12 +86,12 @@ describe("Tag Repository Cache Test", () => {
 
         const spy = jest.spyOn(repo,"GetTags")
 
-        const param = { filter: "", skip: 0, take: 10}
+        const params = [{ filter: "", skip: 0, take: 10},null]
 
         beforeEach(()=>{
             spy.mockReset()
         })
-        it("Without cache", async ()=>{
+        it.each(params)("Without cache %o", async (param)=>{
             spy.mockReturnValue("testing")
             const result = await repoCache.GetTags('',null, param)
             expect(MockCacheLoader).toHaveBeenCalledTimes(0)
@@ -101,7 +101,7 @@ describe("Tag Repository Cache Test", () => {
         })
 
         describe("Local Cache Type", () => {
-            it("Cache Exist", async() =>{
+            it.each(params)("Cache Exist %o", async(param) =>{
                 mockGetCache.mockReturnValue("testing")
                 mockHasCache.mockReturnValue(true)
                 const result = await repoCache.GetTags("local",null, param)
@@ -115,7 +115,7 @@ describe("Tag Repository Cache Test", () => {
                 expect(spy).toBeCalledTimes(0)
             })
 
-            it("Cache Not Exist", async()=> {
+            it.each(params)("Cache Not Exist %o", async(param)=> {
                 const mockResult = "testing"
 
                 mockHasCache.mockReturnValue(false)

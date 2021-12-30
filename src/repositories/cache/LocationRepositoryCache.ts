@@ -1,8 +1,10 @@
+import Mysql from 'mysql2/promise'
+
 import * as repo from '../LocationRepository';
 import * as helpers from '../../helpers/helpers';
 import CacheLoader from '../../caches/CacheLoader';
 
-export const CountRestaurants = async(cacheType:string, connection:any, locationId: number) => {
+export const CountRestaurants = async(cacheType:string, connection:Mysql.Pool, locationId: number) => {
     
     let result = null
     const cacheKey = 'COUNT_LOC_RESTAURANTS_'+helpers.CacheKey({locationId:locationId})
@@ -22,7 +24,7 @@ export const CountRestaurants = async(cacheType:string, connection:any, location
     return result;
 }
 
-export const GetLocations = async (cacheType:string, connection:any, params: { filter: string, skip: number, take: number }) => {
+export const GetLocations = async (cacheType:string, connection:Mysql.Pool, params?: { filter: string, skip: number, take: number } | null) => {
     let result = null
     const cacheKey = 'GET_LOCATIONS_'+helpers.CacheKey(params)
 
@@ -41,7 +43,7 @@ export const GetLocations = async (cacheType:string, connection:any, params: { f
     return result;
 }
 
-export const GetLocationById = async (cacheType:string, connection:any, locationId: number) => {
+export const GetLocationById = async (cacheType:string, connection:Mysql.Pool, locationId: number) => {
     let result = null
     const cacheKey = 'GET_LOCATION_BY_ID_'+helpers.CacheKey({locationId:locationId})
 

@@ -86,22 +86,21 @@ describe("Location Repository Cache Test", () => {
 
         const spy = jest.spyOn(repo,"GetLocations")
 
-        const param = { filter: "", skip: 0, take: 10}
+        const params = [{ filter: "", skip: 0, take: 10},null]
 
         beforeEach(()=>{
             spy.mockReset()
         })
-        it("Without cache", async ()=>{
+        it.each(params)('Without cache by %o', async (param)=> {
             spy.mockReturnValue("testing")
             const result = await repoCache.GetLocations('',null, param)
             expect(MockCacheLoader).toHaveBeenCalledTimes(0)
             expect(spy).toBeCalledTimes(1)
             expect(spy).toBeCalledWith(null, param)
             expect(result).toEqual("testing")
-        })
-
+        }) 
         describe("Local Cache Type", () => {
-            it("Cache Exist", async() =>{
+            it.each(params)('Cache Exist by %o', async (param)=> {
                 mockGetCache.mockReturnValue("testing")
                 mockHasCache.mockReturnValue(true)
                 const result = await repoCache.GetLocations("local",null, param)
@@ -114,8 +113,7 @@ describe("Location Repository Cache Test", () => {
                 expect(mockGetCache).toBeCalledWith(cacheKey)
                 expect(spy).toBeCalledTimes(0)
             })
-
-            it("Cache Not Exist", async()=> {
+            it.each(params)('Cache Not Exist by %o', async (param)=> {
                 const mockResult = "testing"
 
                 mockHasCache.mockReturnValue(false)

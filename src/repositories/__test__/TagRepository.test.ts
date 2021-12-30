@@ -28,8 +28,9 @@ describe('Tag Repository Function - Count Restaurants', () => {
 
 describe('Tag Repository Function - Get Tags', ()=>{
     const requests = [
-        { param: { filter: "ABC", take: 5, skip: 10}, expectData: ["ABC","ABC",10,5], expectSQL: baseSQL+" AND (`zh_name` LIKE '%?%' OR `en_name` LIKE '%?%') LIMIT ?, ?;", expectResult: ["ABC"] },
-        { param: { filter: "DEF", take: 10, skip: 20}, expectData: ["DEF","DEF",20,10], expectSQL: baseSQL+" AND (`zh_name` LIKE '%?%' OR `en_name` LIKE '%?%') LIMIT ?, ?;", expectResult: ["DEF"] },
+        { param: { filter: "ABC", take: 5, skip: 10}, expectData: ["%ABC%","%ABC%",10,5], expectSQL: baseSQL+" AND (`zh_name` LIKE ? OR `en_name` LIKE ?) LIMIT ?, ?;", expectResult: ["ABC"] },
+        { param: { filter: "DEF", take: 10, skip: 20}, expectData: ["%DEF%","%DEF%",20,10], expectSQL: baseSQL+" AND (`zh_name` LIKE ? OR `en_name` LIKE ?) LIMIT ?, ?;", expectResult: ["DEF"] },
+        { param: null, expectData: [], expectSQL: baseSQL+";", expectResult: ["DEF"] },
     ]
     it.each(requests)('Get by %o', async(request)=>{
         const connection = await database('','','','');

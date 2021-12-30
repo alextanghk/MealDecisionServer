@@ -1,38 +1,38 @@
 version: "3"
 
 services:
-  # md.apiserver:
-  #   depends_on:
-  #     - md.mysql
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile
-  #   image: mealdedication
-  #   ports:
-  #     - "${PORT:-8080}:8080"
-  #   networks:
-  #     - meald
-  #   volumes:
-  #     - ".:/var/www/html"
   md.mysql:
+    platform: linux/x86_64
     image: "mysql:5.6"
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-p${DB_PASSWORD}"]
       retries: 3
       timeout: 5s
+    command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci --init-connect='SET NAMES UTF8;' --innodb-flush-log-at-trx-commit=0
     ports:
       - "${FORWARD_DB_PORT:-3306}:3306"
     # networks:
     #   - meald
     volumes:
-      - "${PWD}/init/init.sql:/docker-entrypoint-initdb.d/init.sql:ro"
-      - "mealdmysql:/var/lib/mysql"
+      - ./init.db/db.cnf:/etc/mysql/conf.d/custon.cnf
     environment:
       MYSQL_ROOT_PASSWORD: "${DB_PASSWORD}"
       MYSQL_DATABASE: "${DB_DATABASE}"
       MYSQL_USER: "${DB_USERNAME}"
       MYSQL_PASSWORD: "${DB_PASSWORD}"
-
+#   md.apiserver:
+#     depends_on:
+#       - md.mysql
+#     build:
+#       context: .
+#       dockerfile: Dockerfile
+#     image: mealdedication
+#     ports:
+#       - "${PORT:-8080}:8080"
+#     networks:
+#       - meald
+#     volumes:
+#       - ".:/var/www/html"
 # networks:
 #   meald:
 #     driver: bridge

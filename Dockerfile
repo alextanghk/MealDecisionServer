@@ -9,4 +9,7 @@ COPY . .
 
 EXPOSE 8080
 
+CMD knex migrate:latest
+CMD knex seed:run
+
 CMD npm run start
