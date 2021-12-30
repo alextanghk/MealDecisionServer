@@ -2,14 +2,8 @@ import { Knex } from "knex";
 
 export async function seed(knex: Knex): Promise<void> {
     // Deletes ALL existing entries
-    await knex("table_name").del();
-
-    // Inserts seed entries
-    await knex("table_name").insert([
-        { id: 1, colName: "rowValue1" },
-        { id: 2, colName: "rowValue2" },
-        { id: 3, colName: "rowValue3" }
-    ]);
+    await knex("restaurants").del();
+    await knex("restaurant_links").del();
 
     await knex("restaurants").insert([
         { name:'101手工小火鍋', location_id:16, range_id:2, zh_address:'天水圍天恩路12-18號置富嘉湖一期1樓162號舖', en_adress:'Shop 162, 1F, Phase 1, Fortune Kingswood, 12-18 Tin Yan Road, Tin Shui Wai' },
