@@ -1,4 +1,4 @@
-import database from "./database";
+import database from "../database";
 import MockMysql from 'mysql2/promise';
 jest.mock('mysql2/promise');
 

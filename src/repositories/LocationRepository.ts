@@ -1,6 +1,5 @@
 
 import Mysql from 'mysql2/promise'
-
 export const baseSQL = "SELECT `id`,`zh_name`,`en_name` FROM `locations` WHERE `visible` = 1" 
 
 interface CountData extends Mysql.RowDataPacket {
@@ -22,6 +21,7 @@ export const CountRestaurants = async(connection:Mysql.Pool, locationId: number)
 }
 
 export const GetLocations = async (connection:Mysql.Pool, params?: { filter: string, skip: number, take: number } | null) => {
+
     const sql = baseSQL + (params === null ? ";":" AND (`zh_name` LIKE ? OR `en_name` LIKE ?) LIMIT ?, ?;")
     const data = params === null ? [] : [`%${params?.filter}%`, `%${params?.filter}%`, params?.skip, params?.take]
     const [rows] = await connection.execute<Array<LocationData>>(sql, data)
